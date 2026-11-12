@@ -49,7 +49,8 @@ function mkApi() {
 	const prompts = [];
 	return {
 		prompts,
-		sessions: { prompt: async (payload) => { prompts.push(payload); return { result: { ok: true, value: { accepted: true } } }; } }
+		submit: async (sessionId, content, mode) => { prompts.push({ sessionId, content, mode }); return { ok: true }; },
+		sessions: { prompt: async () => ({ ok: true }) }
 	};
 }
 
@@ -68,7 +69,7 @@ async function mount(element) {
 }
 
 async function renderCard(args, { callId = `call_${mountN}`, sessionId = "s-test", api = mkApi() } = {}) {
-	const { host, root, unmount } = await mount(React.createElement(A2uiToolView, { callId, block: block("a2ui_render", args, callId), sessionId, api, t: T }));
+	const { host, root, unmount } = await mount(React.createElement(A2uiToolView, { callId, block: block("a2ui_render", args, callId), sessionId, api, submit: api.submit, t: T }));
 	return { host, root, unmount, api, callId, sessionId };
 }
 
@@ -208,10 +209,14 @@ const input = (el, value) => act(async () => {
 // ---------- 8. Calendar range ----------
 {
 	const api = mkApi();
+	// Anchor the range to the current month: the picker opens on today, so a
+	// hard-coded month made this test fail as soon as the wall clock moved on.
+	const now = new Date();
+	const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 	const args = {
 		components: [
 			{ id: "root", component: "Column", children: ["cal", "btn"] },
-			{ id: "cal", component: "Calendar", label: "入住区间", bind: "stay", range: true, min: "2026-08-01", max: "2026-09-30" },
+			{ id: "cal", component: "Calendar", label: "入住区间", bind: "stay", range: true, min: `${ym}-01`, max: `${ym}-28` },
 			{ id: "btn", component: "Button", label: "预订", action: { event: { name: "book" } } }
 		], dataModel: { stay: [] }
 	};
@@ -251,7 +256,7 @@ const input = (el, value) => act(async () => {
 	] });
 	const truncated = full.slice(0, full.indexOf("被截断"));
 	const streamingBlock = { callId: "call_stream", argsRaw: truncated }; // unsettled: no "kind"
-	const { host } = await mount(React.createElement(A2uiToolView, { callId: "call_stream", block: streamingBlock, sessionId: "s-test", api: mkApi(), t: T }));
+	const { host } = await mount(React.createElement(A2uiToolView, { callId: "call_stream", block: streamingBlock, sessionId: "s-test", api: mkApi(), submit: mkApi().submit, t: T }));
 	assert(host.textContent.includes("已完成的段落"), "streaming: complete components mount early");
 	assert(host.textContent.includes("生成中…"), "streaming: building footer shown");
 }
@@ -458,7 +463,7 @@ const input = (el, value) => act(async () => {
 	await new Promise((resolve) => setTimeout(resolve, 30));
 	assert(rowByText("表单2", "partial") === undefined, "todo: skipped forms leave 待提交任务");
 	await act(async () => { document.querySelectorAll(".dsha2ui-todo-tab")[1].click(); });
-	await new Promise((resolve) => setTimeout(resolve, 60));
+	await new Promise((resolve) => setTimeout(resolve, 400));
 	await act(async () => { formRowByText("表单2", "skipped").querySelector(".dsha2ui-todo-skip").click(); });
 	await new Promise((resolve) => setTimeout(resolve, 30));
 	assert(formRowByText("表单2", "partial") !== undefined, "todo: 恢复 brings it back");

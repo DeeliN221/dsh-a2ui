@@ -63,15 +63,25 @@ const en = {
 };
 
 export const name = "a2ui-client";
-export const inject = ["slots", "locale", "connection"];
+export const inject = ["slots", "locale", "sessions"];
 
 // Exposed for harness/tests; dsh itself only consumes apply/inject.
 export { A2uiToolView, A2uiUpdateView };
 
 export function apply(ctx) {
 	ctx.effect(() => ctx.locale.register(NS, { zh, en }), "a2ui: dictionaries");
-	const api = ctx.get("connection").api;
-	const View = (props) => <A2uiToolView {...props} api={api} />;
+	// DSH 0.2.x replaced the connection's generic RPC api with the `sessions`
+	// service: each session controller owns prompt(content, mode). Resolve it
+	// lazily — the service is re-provided across connection generations.
+	const submit = async (sessionId, content, mode = "queue") => {
+		const sessions = ctx.get("sessions");
+		const binding = sessions?.binding(sessionId);
+		if (binding === undefined || binding === null) throw new Error(`session ${sessionId} is not bound`);
+		const result = await binding.session.prompt(content, mode);
+		if (result?.ok !== true) throw new Error(result?.error?.message ?? result?.error?.code ?? "prompt rejected");
+		return result;
+	};
+	const View = (props) => <A2uiToolView {...props} submit={submit} />;
 	ctx.slots.inject("tool.call.toolview", () => ctx.slots.register({
 		name: "tool.call.toolview",
 		key: "a2ui_render",

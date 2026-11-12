@@ -1,12 +1,18 @@
-# a2ui-render-in-dsh
+# dsh-a2ui
 
-English | [中文](https://github.com/baihui-ai/a2ui-render-in-dsh/blob/main/README.zh.md)
+English | [中文](https://github.com/DeeliN221/dsh-a2ui/blob/main/README.zh.md)
+
+> **Maintained fork.** This repository forks [baihui-ai/a2ui-render-in-dsh](https://github.com/baihui-ai/a2ui-render-in-dsh) (upstream last published `0.2.0`, 2026-08-31) and keeps it working on current DeepSeek Harness. Published as [`dsh-a2ui`](https://www.npmjs.com/package/dsh-a2ui), targeting **DSH 0.2.2+**. Upstream design, docs and the 44-component catalog are preserved under MIT; see [docs/MAINTENANCE.md](docs/MAINTENANCE.md) for divergence and upstream-sync policy.
+>
+> ```sh
+> dsh plugin --profile web add dsh-a2ui
+> ```
 
 **A2UI interactive cards for the dsh web UI**: the agent adaptively renders **interactive, visual UI cards** right inside the conversation — quizzes, forms, multi-step wizards, dropdowns, date pickers, product cards, sortable/filterable tables, ECharts charts, China map choropleths, math function plots, Mermaid flowcharts/mind maps, KaTeX formulas, Markdown long-form, image uploads, signature pads, and step-by-step algorithm animations. User interactions flow back to the agent as plain-language messages (images included), cards **stream in progressively** and can be **updated in place**, and everything visible is one click away from the clipboard.
 
 The UI protocol is [A2UI v0.9](https://github.com/google/A2UI) (a declarative Agent-to-UI protocol); rendering is powered by Ant Design X's official implementation, [`@ant-design/x-card`](https://www.npmjs.com/package/@ant-design/x-card).
 
-📸 **[Feature showcase with GIFs → DEMO.md](https://github.com/baihui-ai/a2ui-render-in-dsh/blob/main/DEMO.md)** · 🗺️ **[Scenario × component map](https://github.com/baihui-ai/a2ui-render-in-dsh/blob/main/docs/SCENARIOS.md)**
+📸 **[Feature showcase with GIFs → DEMO.md](https://github.com/DeeliN221/dsh-a2ui/blob/main/DEMO.md)** · 🗺️ **[Scenario × component map](https://github.com/DeeliN221/dsh-a2ui/blob/main/docs/SCENARIOS.md)**
 
 ![Quiz interaction](https://raw.githubusercontent.com/baihui-ai/a2ui-render-in-dsh/main/docs/demo-study.gif)
 
@@ -160,21 +166,21 @@ Development: `npm test` runs the jsdom interaction suite (host validation + full
 ### Option A · From npm (recommended)
 
 ```sh
-dsh plugin --profile web add a2ui-render-in-dsh
+dsh plugin --profile web add dsh-a2ui
 dsh web
 ```
 
 Zero runtime dependencies — two commands and you're done. If your npm mirror hasn't synced the latest version yet, point at the official registry explicitly:
 
 ```sh
-dsh plugin --profile web add a2ui-render-in-dsh --registry https://registry.npmjs.org
+dsh plugin --profile web add dsh-a2ui --registry https://registry.npmjs.org
 ```
 
 ### Option B · From source (for developers / hacking on the plugin)
 
 ```sh
 # 1. Clone and build
-git clone https://github.com/baihui-ai/a2ui-render-in-dsh.git
+git clone https://github.com/DeeliN221/dsh-a2ui.git
 cd a2ui-render-in-dsh
 npm install
 npm run build
@@ -202,7 +208,7 @@ curl -s http://127.0.0.1:<port>/ | grep -o "a2ui-render-in-dsh/client.js[^\"]*"
 #    expected:  a2ui-render-in-dsh/client.js?rev=<hash>
 ```
 
-3) Open dsh web and say: **"Quiz me with an interactive card"** — a clickable multiple-choice card means it works (the model calls `a2ui_catalog` once before rendering; that's by design). More prompts: [DEMO.md](https://github.com/baihui-ai/a2ui-render-in-dsh/blob/main/DEMO.md#one-stop-prompt-list).
+3) Open dsh web and say: **"Quiz me with an interactive card"** — a clickable multiple-choice card means it works (the model calls `a2ui_catalog` once before rendering; that's by design). More prompts: [DEMO.md](https://github.com/DeeliN221/dsh-a2ui/blob/main/DEMO.md#one-stop-prompt-list).
 
 ### Upgrade & uninstall
 

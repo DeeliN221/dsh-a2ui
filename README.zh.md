@@ -1,12 +1,18 @@
-# a2ui-render-in-dsh
+# dsh-a2ui
 
-[English](https://github.com/baihui-ai/a2ui-render-in-dsh/blob/main/README.md) | 中文
+[English](https://github.com/DeeliN221/dsh-a2ui/blob/main/README.md) | 中文
+
+> **维护 fork**：本仓库 fork 自 [baihui-ai/a2ui-render-in-dsh](https://github.com/baihui-ai/a2ui-render-in-dsh)（上游最后发布 `0.2.0`，2026-08-31），目标是跟随当前 DeepSeek Harness 持续可用。npm 包名 [`dsh-a2ui`](https://www.npmjs.com/package/dsh-a2ui)，面向 **DSH 0.2.2+**。上游设计、文档和 44 个组件目录按 MIT 保留；分支策略与上游同步方式见 [docs/MAINTENANCE.md](docs/MAINTENANCE.md)。
+>
+> ```sh
+> dsh plugin --profile web add dsh-a2ui
+> ```
 
 **dsh web 的 A2UI 交互卡片插件**：让 Agent 在对话流里自适应地渲染**可交互、可视化的 UI 卡片**——选择题、表单、分步向导、下拉、日历选日期、商品卡、可排序/筛选的表格、ECharts 图表、中国地图分布、数学函数绘图、Mermaid 流程图/思维导图、KaTeX 公式、Markdown 长文、图片上传、手写签名、算法过程动画——用户的点击/勾选/输入以自然语言消息回传给 Agent（图片也能回传），卡片**边生成边渲染**、还能**原地更新**，所见内容一键复制。
 
 UI 协议基于 [A2UI v0.9](https://github.com/google/A2UI)（Agent-to-UI 声明式界面协议），渲染引擎使用 Ant Design X 官方实现 [`@ant-design/x-card`](https://www.npmjs.com/package/@ant-design/x-card)。
 
-📸 **[功能示例（含动图）→ DEMO.md](https://github.com/baihui-ai/a2ui-render-in-dsh/blob/main/DEMO.zh.md)** · 🗺️ **[场景 × 组件映射](https://github.com/baihui-ai/a2ui-render-in-dsh/blob/main/docs/SCENARIOS.zh.md)**
+📸 **[功能示例（含动图）→ DEMO.md](https://github.com/DeeliN221/dsh-a2ui/blob/main/DEMO.zh.md)** · 🗺️ **[场景 × 组件映射](https://github.com/DeeliN221/dsh-a2ui/blob/main/docs/SCENARIOS.zh.md)**
 
 ![做题交互](https://raw.githubusercontent.com/baihui-ai/a2ui-render-in-dsh/main/docs/demo-study.gif)
 
@@ -159,21 +165,21 @@ a2ui-render-in-dsh (一个 npm 包，dsh bundle)
 ### 方式 A · npm 安装（推荐）
 
 ```sh
-dsh plugin --profile web add a2ui-render-in-dsh
+dsh plugin --profile web add dsh-a2ui
 dsh web
 ```
 
 零运行时依赖，两条命令装完即用。若你的 npm 镜像尚未同步最新版本，显式指定官方源：
 
 ```sh
-dsh plugin --profile web add a2ui-render-in-dsh --registry https://registry.npmjs.org
+dsh plugin --profile web add dsh-a2ui --registry https://registry.npmjs.org
 ```
 
 ### 方式 B · 源码安装（开发者 / 需要改代码时）
 
 ```sh
 # 1. 克隆并构建
-git clone https://github.com/baihui-ai/a2ui-render-in-dsh.git
+git clone https://github.com/DeeliN221/dsh-a2ui.git
 cd a2ui-render-in-dsh
 npm install
 npm run build
@@ -201,7 +207,7 @@ curl -s http://127.0.0.1:<port>/ | grep -o "a2ui-render-in-dsh/client.js[^\"]*"
 #    期望输出：a2ui-render-in-dsh/client.js?rev=<hash>
 ```
 
-③ 打开 dsh web 对它说：**「用交互卡片出一道单选题考我」**——出现可点选的选择题卡片即安装成功（模型会先调一次 `a2ui_catalog` 再渲染，属正常流程）。更多试玩提示词见 [DEMO.zh.md](https://github.com/baihui-ai/a2ui-render-in-dsh/blob/main/DEMO.zh.md#一站式体验提示词)。
+③ 打开 dsh web 对它说：**「用交互卡片出一道单选题考我」**——出现可点选的选择题卡片即安装成功（模型会先调一次 `a2ui_catalog` 再渲染，属正常流程）。更多试玩提示词见 [DEMO.zh.md](https://github.com/DeeliN221/dsh-a2ui/blob/main/DEMO.zh.md#一站式体验提示词)。
 
 ### 升级与卸载
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.0 (2026-11-13)
+
+**Fork baseline: works on DSH 0.2.2 again.** The plugin was last released against DSH 0.1.x; on 0.2.2 the tools ran and the model answered, but the surface stayed invisible and submit was broken.
+
+- **Surfaces are visible again.** DSH 0.2.x folds tool calls into the turn's collapsible process block, and the tool row has its own collapse; both carry `hidden="until-found"`. The toolview now reveals the collapses that host its surface (re-checked for 3s so a late attribute write cannot re-fold it).
+- **Submit works again.** The client no longer reads `connection.api.sessions.prompt` (removed in 0.2.x). Client plugins now resolve `ctx.get("sessions").binding(sessionId).session.prompt(content, mode)`; the card's submission goes through that service.
+- **Tests green.** The calendar-range test hard-coded 2026-08 and broke by wall clock; it now anchors to the current month. The jsdom suite passes end to end (69 assertions).
+- **Renamed** to `dsh-a2ui`; package, bundle patch and docs updated; MIT and upstream attribution kept.
+- **Build/CI**: `pnpm-lock.yaml` committed, esbuild build script allowlisted, CI runs install → build → size budget → test.
+
+Verified by hand on DSH `0.2.2-rc.1` (DeepSeek-V4.1-Flash): card streams in, option select works, submit posts a user message and the model replies, card locks with a timestamp.
+
 ## 0.2.0 (2026-08-31)
 
 **Adaptive triggering, purpose-anchored.** The render contract now judges every reply against UI's four purposes — act 操作 / browse 浏览 / understand 理解 / feedback 反馈 — verified with keyword-free prompts (grounded in HCI research: Norman's gulfs, the keyhole effect, external cognition). Data-viewing asks always chart; multi-item recommendations render item cards; multi-step work opens a Progress card advanced via `a2ui_update`. Cards always pair with a prose takeaway. Resident tool description trimmed ~24% while adding all of the above.

@@ -1,7 +1,6 @@
-# 依赖与锁文件（本项目不提交锁文件）
+# 依赖（pnpm-lock.yaml 提交，保证 CI 与发布可复现）
 node_modules/
 package-lock.json
-pnpm-lock.yaml
 yarn.lock
 
 # 构建产物（npm run build 重新生成）

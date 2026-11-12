@@ -318,7 +318,7 @@ export function A2uiUpdateView({ callId, block, sessionId, t }) {
 	return <div className="dsha2ui-skeleton"><span>↺</span><span>{t("card.updated")}{parts.length > 0 ? `（${parts.join("、")}）` : ""}</span></div>;
 }
 
-export function A2uiToolView({ callId, block, sessionId, api, t }) {
+export function A2uiToolView({ callId, block, sessionId, api, submit, t }) {
 	const settled = "kind" in block;
 	const isError = settled && block.isError === true;
 	const args = useMemo(() => parseArgs(block), [block]);
@@ -473,6 +473,33 @@ export function A2uiToolView({ callId, block, sessionId, api, t }) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ready, hasInputs, callId]);
 
+	// DSH 0.2.x folds tool calls into the turn's collapsible "process" block: the
+	// flow item carries hidden="until-found", so a surface that IS the answer would
+	// stay folded away. Reveal the item hosting this surface, and keep it revealed
+	// if the transcript re-collapses on a later render.
+	useEffect(() => {
+		const node = wrapRef.current;
+		if (node === null) return undefined;
+		// The transcript may attach the hidden attribute after this commit, and may
+		// swap the flow node while the turn settles, so re-check for a short window
+		// instead of watching one node.
+		const raf = typeof requestAnimationFrame === "function" ? requestAnimationFrame : (fn) => setTimeout(fn, 16);
+		const cancel = typeof cancelAnimationFrame === "function" ? cancelAnimationFrame : clearTimeout;
+		let frame = 0;
+		const started = Date.now();
+		const reveal = () => {
+			node.dataset.a2uiReveal = "1";
+			// DSH nests two collapses: the turn's process flow item and the tool
+			// row's own body. A surface is the answer, so open both.
+			for (let el = node.closest('[data-chat-flow-kind="tool-call"]') ?? node; el !== null && el !== document.body; el = el.parentElement) {
+				if (el.hasAttribute("hidden")) el.removeAttribute("hidden");
+			}
+			if (Date.now() - started < 3000) frame = raf(reveal);
+		};
+		reveal();
+		return () => cancel(frame);
+	}, [ready]);
+
 	const [resubmitting, setResubmitting] = useState(false);
 	const handleAction = useCallback(async (payload) => {
 		const meta = payload.context !== null && typeof payload.context === "object" ? payload.context : {};
@@ -500,20 +527,8 @@ export function A2uiToolView({ callId, block, sessionId, api, t }) {
 		setSendState({ kind: "sending", name: buttonLabel });
 		mirrorRef.current.setBusy(true);
 		try {
-			let clientTimeZone;
-			try {
-				clientTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-			} catch {
-				clientTimeZone = undefined;
-			}
 			const images = isSuggestion ? [] : (mirrorRef.current.uploads ?? []).map((file) => ({ type: "image", mediaType: file.mediaType, data: file.data, ...file.name !== undefined ? { name: file.name } : {} }));
-			const { result } = await api.sessions.prompt({
-				sessionId,
-				mode: "queue",
-				content: [{ type: "text", text }, ...images],
-				...clientTimeZone !== undefined ? { clientTimeZone } : {}
-			});
-			if (!result.ok) throw new Error(result.error?.message ?? result.error?.code ?? "prompt rejected");
+			await submit(sessionId, [{ type: "text", text }, ...images], "queue");
 			const at = Date.now();
 			if (!isSuggestion) {
 				writeSubmissionRecord(storageKey, { text, at, data: mirrorRef.current.data, lock: shouldLock });
@@ -530,7 +545,7 @@ export function A2uiToolView({ callId, block, sessionId, api, t }) {
 		} finally {
 			mirrorRef.current.setBusy(false);
 		}
-	}, [api, sessionId, storageKey, draftKey, callId, submitMode, hasInputs, resubmitting, t]);
+	}, [submit, sessionId, storageKey, draftKey, callId, submitMode, hasInputs, resubmitting, t]);
 
 	if (args === null || isError) {
 		return (
