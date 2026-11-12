@@ -10,7 +10,7 @@
 - **Renamed** to `dsh-a2ui`; package, bundle patch and docs updated; MIT and upstream attribution kept.
 - **Build/CI**: `pnpm-lock.yaml` committed, esbuild build script allowlisted, CI runs install → build → size budget → test.
 
-Verified by hand on DSH `0.2.2-rc.1` (DeepSeek-V4.1-Flash): card streams in, option select works, submit posts a user message and the model replies, card locks with a timestamp.
+Verified by hand on DSH `0.2.2-rc.1` (DeepSeek-V4.1-Flash): card streams in, option select works, submit posts a user message and the model replies, card locks with a timestamp — see `docs/assets/verified-0.3.0-dsh-0.2.2.png`.
 
 ## 0.2.0 (2026-08-31)
 
