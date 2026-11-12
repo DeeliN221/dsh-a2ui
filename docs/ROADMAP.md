@@ -4,9 +4,10 @@ Ordered by user-visible value. Items are sized for one focused change each.
 
 ## Now — make the fork a trustworthy baseline
 
-- [x] Verify on DSH 0.2.2-rc.1 end to end: boot, stream a card, submit (update still to verify).
+- [x] Verify on DSH 0.2.2-rc.1 end to end: boot, stream a card, submit, in-place `a2ui_update`.
 - [x] Fix the jsdom test suite (date-dependent calendar case).
-- [ ] CI: install, build, test on every push; publish on tag (workflow added, release job pending).
+- [x] CI on every push: install, build, size budget, tests (green).
+- [ ] Release job on tag once npm publishing credentials are available.
 - [ ] Pin `lib/client.js` size budget and fail the build if it grows > 10%.
 
 ## Next — protocol and streaming
